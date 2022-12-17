@@ -21,7 +21,7 @@
 		DD379843294D4FAA00650BE3 /* ResourceManaging.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD379841294D4FAA00650BE3 /* ResourceManaging.swift */; };
 		DD379844294D4FAA00650BE3 /* ManagedMLModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD379842294D4FAA00650BE3 /* ManagedMLModel.swift */; };
 		DD379847294D95AB00650BE3 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD379846294D95AB00650BE3 /* Extensions.swift */; };
-		DD379849294D964A00650BE3 /* ErrorPopover.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD379848294D964A00650BE3 /* ErrorPopover.swift */; };
+		DD379849294D964A00650BE3 /* ErrorBanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD379848294D964A00650BE3 /* ErrorBanner.swift */; };
 		DD37984B294D97C000650BE3 /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD37984A294D97C000650BE3 /* AppState.swift */; };
 		DD37984D294D9E6700650BE3 /* Functions.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD37984C294D9E6700650BE3 /* Functions.swift */; };
 		DD6512D0294B0FF50035EC0F /* PreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD6512CF294B0FF50035EC0F /* PreviewView.swift */; };
@@ -67,7 +67,7 @@
 		DD379841294D4FAA00650BE3 /* ResourceManaging.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ResourceManaging.swift; sourceTree = "<group>"; };
 		DD379842294D4FAA00650BE3 /* ManagedMLModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ManagedMLModel.swift; sourceTree = "<group>"; };
 		DD379846294D95AB00650BE3 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
-		DD379848294D964A00650BE3 /* ErrorPopover.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorPopover.swift; sourceTree = "<group>"; };
+		DD379848294D964A00650BE3 /* ErrorBanner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorBanner.swift; sourceTree = "<group>"; };
 		DD37984A294D97C000650BE3 /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
 		DD37984C294D9E6700650BE3 /* Functions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Functions.swift; sourceTree = "<group>"; };
 		DD651294294ADF9D0035EC0F /* Sign-Debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "Sign-Debug.xcconfig"; sourceTree = "<group>"; };
@@ -265,7 +265,7 @@
 			children = (
 				DD6512CF294B0FF50035EC0F /* PreviewView.swift */,
 				EBE755CA293E37DD00806B32 /* MainAppView.swift */,
-				DD379848294D964A00650BE3 /* ErrorPopover.swift */,
+				DD379848294D964A00650BE3 /* ErrorBanner.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -422,7 +422,7 @@
 				DD37983E294D4D0C00650BE3 /* DPMSolverMultistepScheduler.swift in Sources */,
 				DD37984B294D97C000650BE3 /* AppState.swift in Sources */,
 				DD379834294D4C8000650BE3 /* Scheduler.swift in Sources */,
-				DD379849294D964A00650BE3 /* ErrorPopover.swift in Sources */,
+				DD379849294D964A00650BE3 /* ErrorBanner.swift in Sources */,
 				DD379844294D4FAA00650BE3 /* ManagedMLModel.swift in Sources */,
 				EBE755C9293E37DD00806B32 /* DiffusionApp.swift in Sources */,
 			);

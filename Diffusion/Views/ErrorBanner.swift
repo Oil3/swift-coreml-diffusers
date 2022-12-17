@@ -7,13 +7,14 @@
 
 import SwiftUI
 
-struct ErrorPopover: View {
+struct ErrorBanner: View {
 	var errorMessage: String
 
 	var body: some View {
 		Text(errorMessage)
+			.frame(maxWidth: .infinity)
 			.font(.headline)
-			.padding()
+			.padding(8)
 			.foregroundColor(.red)
 			.background(Color.white)
 			.cornerRadius(8)
@@ -21,8 +22,8 @@ struct ErrorPopover: View {
 	}
 }
 
-struct ErrorPopover_Previews: PreviewProvider {
+struct ErrorBanner_Previews: PreviewProvider {
     static var previews: some View {
-        ErrorPopover(errorMessage: "This is an error!")
+        ErrorBanner(errorMessage: "This is an error!")
     }
 }

@@ -36,23 +36,24 @@ struct MainAppView: View {
 
 	@State private var stateSubscriber: Cancellable?
     @State private var progressSubscriber: Cancellable?
+    @State private var progressSubs: Cancellable?
+	    
+	var isBusy: Bool {
+		if case .loading = state {
+			return true
+		}
+		if case .running = state {
+			return true
+		}
+		return false
+	}
 	
-
-	func submit() {
-        if case .running = state { return }
-        Task {
-            state = .running(nil)
-            await generate(pipeline: context.pipeline, prompt: prompt)
-            state = .ready("Image generation complete")
-        }
-    }
-    
     var body: some View {
 		VStack(alignment: .leading) {
 			if case .loading = state {
-				ErrorPopover(errorMessage: "Loading ...")
+				ErrorBanner(errorMessage: "Loading ...")
 			} else if case let .error(msg) = state {
-				ErrorPopover(errorMessage: msg)
+				ErrorBanner(errorMessage: msg)
 			} else if case let .running(progress) = state {
 				getProgressView(progress: progress)
 			}
@@ -68,8 +69,9 @@ struct MainAppView: View {
                 }
                 .padding()
                 .buttonStyle(.borderedProminent)
+				.disabled(isBusy)
             }
-			Spacer()
+			Spacer().frame(height: 16)
 			HStack(alignment: .top) {
 				VStack(alignment: .leading) {
 					Group {
@@ -150,26 +152,49 @@ struct MainAppView: View {
         }
     }
 	
-	func generate(pipeline: Pipeline?, prompt: String) async {
-		guard let pipeline = pipeline else { return }
-		do {
-			let imgs = try pipeline.generate(prompt: prompt, negPrompt: negPrompt, scheduler: scheduler, numInferenceSteps: Int(steps), safetyOn: safetyOn, seed: seed)
-			image = imgs.first
-			images.append(contentsOf: imgs)
-		} catch {
-			NSLog("Error generating images: \(error)")
+	private func getProgressView(progress: StableDiffusionProgress?) -> AnyView {
+		if let progress = progress, progress.stepCount > 0 {
+			let step = Int(progress.step) + 1
+			let fraction = Double(step) / Double(progress.stepCount)
+			let label = "Step \(step) of \(progress.stepCount)"
+			return AnyView(ProgressView(label, value: fraction, total: 1).padding())
 		}
+		// The first time it takes a little bit before generation starts
+		return AnyView(ProgressView(label: {Text("Loading ...")}).progressViewStyle(.linear).padding())
 	}
 	
-	private func getProgressView(progress: StableDiffusionProgress?) -> AnyView {
-		guard let progress = progress, progress.stepCount > 0 else {
-			// The first time it takes a little bit before generation starts
-			return AnyView(ProgressView())
+	private func submit() {
+		if case .running = state { return }
+		guard let pipeline = context.pipeline else {
+			state = .error("No pipeline available!")
+			return
 		}
-		let step = Int(progress.step) + 1
-		let fraction = Double(step) / Double(progress.stepCount)
-		let label = "Step \(step) of \(progress.stepCount)"
-		return AnyView(ProgressView(label, value: fraction, total: 1).padding())
+		state = .running(nil)
+		// Pipeline progress subscriber
+		progressSubs = pipeline.progressPublisher.sink { progress in
+			guard let progress = progress else { return }
+			DispatchQueue.main.async {
+				state = .running(progress)
+			}
+		}
+		DispatchQueue.global(qos: .background).async {
+			do {
+				// Generate
+				let imgs = try pipeline.generate(prompt: prompt, negPrompt: negPrompt, scheduler: scheduler, numInferenceSteps: Int(steps), safetyOn: safetyOn, seed: seed)
+				progressSubs?.cancel()
+				DispatchQueue.main.async {
+					image = imgs.first
+					images.append(contentsOf: imgs)
+					state = .ready("Image generation complete")
+				}
+			} catch {
+				let msg = "Error generating images: \(error)"
+				NSLog(msg)
+				DispatchQueue.main.async {
+					state = .error(msg)
+				}
+			}
+		}
 	}
 }
 
