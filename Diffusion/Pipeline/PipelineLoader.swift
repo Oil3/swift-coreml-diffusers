@@ -12,7 +12,6 @@ import Combine
 
 import Path
 import ZIPFoundation
-import StableDiffusion
 
 class PipelineLoader {
     static let models = Path.applicationSupport / "models"

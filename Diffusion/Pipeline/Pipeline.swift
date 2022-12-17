@@ -10,8 +10,6 @@ import Foundation
 import CoreML
 import Combine
 
-import StableDiffusion
-
 typealias StableDiffusionProgress = StableDiffusionPipeline.Progress
 
 class Pipeline {

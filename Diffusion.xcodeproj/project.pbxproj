@@ -7,12 +7,22 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		DD37982C294D4BFD00650BE3 /* StableDiffusionPipeline.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD37982A294D4BFD00650BE3 /* StableDiffusionPipeline.swift */; };
+		DD379830294D4C4800650BE3 /* Unet.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD37982D294D4C4800650BE3 /* Unet.swift */; };
+		DD379831294D4C4800650BE3 /* SafetyChecker.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD37982E294D4C4800650BE3 /* SafetyChecker.swift */; };
+		DD379832294D4C4800650BE3 /* TextEncoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD37982F294D4C4800650BE3 /* TextEncoder.swift */; };
+		DD379834294D4C8000650BE3 /* Scheduler.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD379833294D4C8000650BE3 /* Scheduler.swift */; };
+		DD379836294D4C9E00650BE3 /* StableDiffusionPipeline+Resources.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD379835294D4C9E00650BE3 /* StableDiffusionPipeline+Resources.swift */; };
+		DD379839294D4CC500650BE3 /* BPETokenizer+Reading.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD379837294D4CC500650BE3 /* BPETokenizer+Reading.swift */; };
+		DD37983A294D4CC500650BE3 /* BPETokenizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD379838294D4CC500650BE3 /* BPETokenizer.swift */; };
+		DD37983D294D4D0C00650BE3 /* Random.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD37983B294D4D0C00650BE3 /* Random.swift */; };
+		DD37983E294D4D0C00650BE3 /* DPMSolverMultistepScheduler.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD37983C294D4D0C00650BE3 /* DPMSolverMultistepScheduler.swift */; };
+		DD379840294D4D3F00650BE3 /* Decoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD37983F294D4D3F00650BE3 /* Decoder.swift */; };
 		DD6512D0294B0FF50035EC0F /* PreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD6512CF294B0FF50035EC0F /* PreviewView.swift */; };
 		EBB5BA5329425BEE003A2A5B /* PipelineLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBB5BA5229425BEE003A2A5B /* PipelineLoader.swift */; };
 		EBB5BA5829425E17003A2A5B /* Path in Frameworks */ = {isa = PBXBuildFile; productRef = EBB5BA5729425E17003A2A5B /* Path */; };
 		EBB5BA5A29426E06003A2A5B /* Downloader.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBB5BA5929426E06003A2A5B /* Downloader.swift */; };
 		EBB5BA5D294504DE003A2A5B /* ZIPFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = EBB5BA5C294504DE003A2A5B /* ZIPFoundation */; };
-		EBB5BA602946365A003A2A5B /* StableDiffusion in Frameworks */ = {isa = PBXBuildFile; productRef = EBB5BA5F2946365A003A2A5B /* StableDiffusion */; };
 		EBE755C9293E37DD00806B32 /* DiffusionApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBE755C8293E37DD00806B32 /* DiffusionApp.swift */; };
 		EBE755CB293E37DD00806B32 /* TextToImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBE755CA293E37DD00806B32 /* TextToImageView.swift */; };
 		EBE755CD293E37DD00806B32 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = EBE755CC293E37DD00806B32 /* Assets.xcassets */; };
@@ -42,6 +52,17 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		DD37982A294D4BFD00650BE3 /* StableDiffusionPipeline.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StableDiffusionPipeline.swift; sourceTree = "<group>"; };
+		DD37982D294D4C4800650BE3 /* Unet.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Unet.swift; sourceTree = "<group>"; };
+		DD37982E294D4C4800650BE3 /* SafetyChecker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SafetyChecker.swift; sourceTree = "<group>"; };
+		DD37982F294D4C4800650BE3 /* TextEncoder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TextEncoder.swift; sourceTree = "<group>"; };
+		DD379833294D4C8000650BE3 /* Scheduler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Scheduler.swift; sourceTree = "<group>"; };
+		DD379835294D4C9E00650BE3 /* StableDiffusionPipeline+Resources.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "StableDiffusionPipeline+Resources.swift"; sourceTree = "<group>"; };
+		DD379837294D4CC500650BE3 /* BPETokenizer+Reading.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "BPETokenizer+Reading.swift"; sourceTree = "<group>"; };
+		DD379838294D4CC500650BE3 /* BPETokenizer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BPETokenizer.swift; sourceTree = "<group>"; };
+		DD37983B294D4D0C00650BE3 /* Random.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Random.swift; sourceTree = "<group>"; };
+		DD37983C294D4D0C00650BE3 /* DPMSolverMultistepScheduler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DPMSolverMultistepScheduler.swift; sourceTree = "<group>"; };
+		DD37983F294D4D3F00650BE3 /* Decoder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Decoder.swift; sourceTree = "<group>"; };
 		DD651294294ADF9D0035EC0F /* Sign-Debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "Sign-Debug.xcconfig"; sourceTree = "<group>"; };
 		DD651295294ADFAB0035EC0F /* Debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Debug.xcconfig; sourceTree = "<group>"; };
 		DD651296294AE18F0035EC0F /* Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Release.xcconfig; sourceTree = "<group>"; };
@@ -71,7 +92,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				EBB5BA602946365A003A2A5B /* StableDiffusion in Frameworks */,
 				EBB5BA5829425E17003A2A5B /* Path in Frameworks */,
 				EBB5BA5D294504DE003A2A5B /* ZIPFoundation in Frameworks */,
 			);
@@ -94,6 +114,40 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		DD379828294D496700650BE3 /* CoreML */ = {
+			isa = PBXGroup;
+			children = (
+				DD379829294D4BFD00650BE3 /* pipeline */,
+				DD37982B294D4BFD00650BE3 /* tokenizer */,
+			);
+			path = CoreML;
+			sourceTree = "<group>";
+		};
+		DD379829294D4BFD00650BE3 /* pipeline */ = {
+			isa = PBXGroup;
+			children = (
+				DD37983F294D4D3F00650BE3 /* Decoder.swift */,
+				DD37983C294D4D0C00650BE3 /* DPMSolverMultistepScheduler.swift */,
+				DD37983B294D4D0C00650BE3 /* Random.swift */,
+				DD379835294D4C9E00650BE3 /* StableDiffusionPipeline+Resources.swift */,
+				DD379833294D4C8000650BE3 /* Scheduler.swift */,
+				DD37982E294D4C4800650BE3 /* SafetyChecker.swift */,
+				DD37982F294D4C4800650BE3 /* TextEncoder.swift */,
+				DD37982D294D4C4800650BE3 /* Unet.swift */,
+				DD37982A294D4BFD00650BE3 /* StableDiffusionPipeline.swift */,
+			);
+			path = pipeline;
+			sourceTree = "<group>";
+		};
+		DD37982B294D4BFD00650BE3 /* tokenizer */ = {
+			isa = PBXGroup;
+			children = (
+				DD379838294D4CC500650BE3 /* BPETokenizer.swift */,
+				DD379837294D4CC500650BE3 /* BPETokenizer+Reading.swift */,
+			);
+			path = tokenizer;
+			sourceTree = "<group>";
+		};
 		DD651293294ADF680035EC0F /* BuildConfiguratons */ = {
 			isa = PBXGroup;
 			children = (
@@ -120,6 +174,7 @@
 				EBE4438729488DCA00CDA605 /* README.md */,
 				EBE443892948953600CDA605 /* LICENSE */,
 				EBE755C7293E37DD00806B32 /* Diffusion */,
+				DD379828294D496700650BE3 /* CoreML */,
 				EBE755D9293E37DE00806B32 /* DiffusionTests */,
 				EBE755E3293E37DE00806B32 /* DiffusionUITests */,
 				DD651293294ADF680035EC0F /* BuildConfiguratons */,
@@ -221,7 +276,6 @@
 			packageProductDependencies = (
 				EBB5BA5729425E17003A2A5B /* Path */,
 				EBB5BA5C294504DE003A2A5B /* ZIPFoundation */,
-				EBB5BA5F2946365A003A2A5B /* StableDiffusion */,
 			);
 			productName = Diffusion;
 			productReference = EBE755C5293E37DD00806B32 /* Diffusion.app */;
@@ -298,7 +352,6 @@
 			packageReferences = (
 				EBB5BA5629425E17003A2A5B /* XCRemoteSwiftPackageReference "Path.swift" */,
 				EBB5BA5B294504DE003A2A5B /* XCRemoteSwiftPackageReference "ZIPFoundation" */,
-				EBB5BA5E2946365A003A2A5B /* XCRemoteSwiftPackageReference "ml-stable-diffusion" */,
 			);
 			productRefGroup = EBE755C6293E37DD00806B32 /* Products */;
 			projectDirPath = "";
@@ -342,11 +395,22 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DD379839294D4CC500650BE3 /* BPETokenizer+Reading.swift in Sources */,
+				DD37983A294D4CC500650BE3 /* BPETokenizer.swift in Sources */,
+				DD37982C294D4BFD00650BE3 /* StableDiffusionPipeline.swift in Sources */,
 				EBE75602293E91E200806B32 /* Pipeline.swift in Sources */,
+				DD379840294D4D3F00650BE3 /* Decoder.swift in Sources */,
 				EBE755CB293E37DD00806B32 /* TextToImageView.swift in Sources */,
+				DD379831294D4C4800650BE3 /* SafetyChecker.swift in Sources */,
+				DD379830294D4C4800650BE3 /* Unet.swift in Sources */,
+				DD379836294D4C9E00650BE3 /* StableDiffusionPipeline+Resources.swift in Sources */,
+				DD37983D294D4D0C00650BE3 /* Random.swift in Sources */,
 				DD6512D0294B0FF50035EC0F /* PreviewView.swift in Sources */,
 				EBB5BA5A29426E06003A2A5B /* Downloader.swift in Sources */,
 				EBE756092941178600806B32 /* LoadingView.swift in Sources */,
+				DD379832294D4C4800650BE3 /* TextEncoder.swift in Sources */,
+				DD37983E294D4D0C00650BE3 /* DPMSolverMultistepScheduler.swift in Sources */,
+				DD379834294D4C8000650BE3 /* Scheduler.swift in Sources */,
 				EBB5BA5329425BEE003A2A5B /* PipelineLoader.swift in Sources */,
 				EBE755C9293E37DD00806B32 /* DiffusionApp.swift in Sources */,
 			);
@@ -732,14 +796,6 @@
 				minimumVersion = 0.9.9;
 			};
 		};
-		EBB5BA5E2946365A003A2A5B /* XCRemoteSwiftPackageReference "ml-stable-diffusion" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/pcuenca/ml-stable-diffusion";
-			requirement = {
-				branch = main;
-				kind = branch;
-			};
-		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -752,11 +808,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = EBB5BA5B294504DE003A2A5B /* XCRemoteSwiftPackageReference "ZIPFoundation" */;
 			productName = ZIPFoundation;
-		};
-		EBB5BA5F2946365A003A2A5B /* StableDiffusion */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = EBB5BA5E2946365A003A2A5B /* XCRemoteSwiftPackageReference "ml-stable-diffusion" */;
-			productName = StableDiffusion;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
