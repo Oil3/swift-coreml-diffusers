@@ -11,6 +11,7 @@
 // https://help.apple.com/xcode/#/dev745c5c974
 
 // See the first link above for details on how to get the following values
+PRODUCT_BUNDLE_IDENTIFIER = <Your bundle identifier from the app>
 DEVELOPMENT_TEAM = <10 character Team ID>
 CODE_SIGN_IDENTITY[sdk=iphoneos*] = <40 character SHA1 Hash from provisionin profile for iOS>
 PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*] = <36 character UUID from provisioning profile for iOS>

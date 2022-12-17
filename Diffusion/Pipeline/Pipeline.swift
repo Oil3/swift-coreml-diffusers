@@ -27,15 +27,17 @@ class Pipeline {
         self.pipeline = pipeline
     }
     
-	func generate(prompt: String, scheduler: StableDiffusionScheduler, numInferenceSteps stepCount: Int = 50, imageCount: Int = 1, safetyOn: Bool = false, seed: Int? = nil) throws -> CGImage {
+	func generate(prompt: String, negPrompt: String, scheduler: StableDiffusionScheduler, numInferenceSteps stepCount: Int = 50, imageCount: Int = 1, guidance: Float = 7.5, safetyOn: Bool = false, seed: Int? = nil) throws -> [CGImage] {
         let beginDate = Date()
-        print("Generating...")
+        NSLog("Generating...")
         let theSeed = seed ?? Int.random(in: 0..<Int.max)
         let images = try pipeline.generateImages(
             prompt: prompt,
+			negativePrompt: negPrompt,
             imageCount: imageCount,
             stepCount: stepCount,
             seed: theSeed,
+			guidanceScale: guidance,
 			disableSafety: !safetyOn,
             scheduler: scheduler
         ) { progress in
@@ -43,10 +45,12 @@ class Pipeline {
             return true
         }
         print("Got images: \(images) in \(Date().timeIntervalSince(beginDate))")
-        
-        // unwrap the 1 image we asked for
-        guard let image = images.compactMap({ $0 }).first else { throw "Generation failed" }
-        return image
+        // Do we have the righ number of images?
+		let imgs = images.compactMap({$0})
+		if imgs.count != imageCount {
+			throw "Generation failed: got \(imgs.count) instead of \(imageCount)"
+		}
+        return imgs
     }
 
     func handleProgress(_ progress: StableDiffusionPipeline.Progress) {

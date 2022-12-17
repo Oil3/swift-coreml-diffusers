@@ -130,9 +130,7 @@ extension PipelineLoader {
         let beginDate = Date()
         let configuration = MLModelConfiguration()
         configuration.computeUnits = .cpuAndGPU       // .all works for v1.4, but not for v1.5. TODO: measure performance on different devices
-        let pipeline = try StableDiffusionPipeline(resourcesAt: url,
-                                                   configuration: configuration,
-                                                   disableSafety: false)
+        let pipeline = try StableDiffusionPipeline(resourcesAt: url, configuration: configuration, disableSafety: false)
         print("Pipeline loaded in \(Date().timeIntervalSince(beginDate))")
         state = .loaded
         return pipeline

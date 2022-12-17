@@ -7,11 +7,11 @@ import Accelerate
 import CoreGraphics
 
 /// Schedulers compatible with StableDiffusionPipeline
-public enum StableDiffusionScheduler {
+public enum StableDiffusionScheduler: String, CaseIterable {
     /// Scheduler that uses a pseudo-linear multi-step (PLMS) method
-    case pndm
+    case pndm = "PNDM"
     /// Scheduler that uses a second order DPM-Solver++ algorithm
-    case dpmpp
+    case dpmpp = "DPMPP"
 }
 
 /// A pipeline used to generate image samples from text input using stable diffusion
@@ -63,13 +63,11 @@ public struct StableDiffusionPipeline: ResourceManaging {
                 unet: Unet,
                 decoder: Decoder,
                 safetyChecker: SafetyChecker? = nil,
-                guidanceScale: Float = 7.5,
                 reduceMemory: Bool = false) {
         self.textEncoder = textEncoder
         self.unet = unet
         self.decoder = decoder
         self.safetyChecker = safetyChecker
-        self.guidanceScale = guidanceScale
         self.reduceMemory = reduceMemory
     }
 
@@ -111,15 +109,18 @@ public struct StableDiffusionPipeline: ResourceManaging {
     ///   - stepCount: Number of inference steps to perform
     ///   - imageCount: Number of samples/images to generate for the input prompt
     ///   - seed: Random seed which
+    ///   - guidanceScale: For classifier guidance
     ///   - disableSafety: Safety checks are only performed if `self.canSafetyCheck && !disableSafety`
     ///   - progressHandler: Callback to perform after each step, stops on receiving false response
     /// - Returns: An array of `imageCount` optional images.
     ///            The images will be nil if safety checks were performed and found the result to be un-safe
     public func generateImages(
         prompt: String,
+        negativePrompt: String = "",
         imageCount: Int = 1,
         stepCount: Int = 50,
         seed: Int = 0,
+        guidanceScale: Float = 7.5,
         disableSafety: Bool = false,
         scheduler: StableDiffusionScheduler = .pndm,
         progressHandler: (Progress) -> Bool = { _ in true }
@@ -127,17 +128,18 @@ public struct StableDiffusionPipeline: ResourceManaging {
 
         // Encode the input prompt as well as a blank unconditioned input
         let promptEmbedding = try textEncoder.encode(prompt)
-        let blankEmbedding = try textEncoder.encode("")
+        let negativePromptEmbedding = try textEncoder.encode(negativePrompt)
+		//		let blankEmbedding = try textEncoder.encode("")
 
         if reduceMemory {
             textEncoder.unloadResources()
         }
 
-        // Convert to Unet hidden state representation
-        let concatEmbedding = MLShapedArray<Float32>(
-            concatenating: [blankEmbedding, promptEmbedding],
-            alongAxis: 0
-        )
+        // Concatenate the prompt and negative prompt embeddings
+		let concatEmbedding = MLShapedArray<Float32>(
+			concatenating: [negativePromptEmbedding, promptEmbedding],
+			alongAxis: 0
+		)
 
         let hiddenStates = toHiddenStates(concatEmbedding)
 
