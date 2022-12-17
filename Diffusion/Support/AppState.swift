@@ -13,6 +13,8 @@ class AppState: ObservableObject {
 	static let shared = AppState()
 	
 	@Published var pipeline: Pipeline? = nil
+	@Published var modelDir = URL(string: "http://google.com")!
+	@Published var models = [String]()
 
 	private(set) lazy var statePublisher: CurrentValueSubject<MainViewState, Never> = CurrentValueSubject(state)
 
@@ -35,19 +37,25 @@ class AppState: ObservableObject {
 			NSLog("Models directory does not exist at: \(dir.path). Creating ...")
 			try? fm.createDirectory(at: dir, withIntermediateDirectories: true)
 		}
-		// Hardcode model for now
-		let model = "coreml-stable-diffusion-v1-5_original_compiled"
-		dir.append(path: model, directoryHint: .isDirectory)
-		if !fm.fileExists(atPath: dir.path) {
-			let msg = "Model directory: \(model) does not exist at: \(dir.path). Cannot proceed."
-			NSLog(msg)
-			state = .error(msg)
+		modelDir = dir
+		// Find models in model dir
+		do {
+			let subs = try dir.subDirectories()
+			subs.forEach {sub in
+				models.append(sub.lastPathComponent)
+			}
+		} catch {
+			state = .error("Could not get sub-folders under model directory: \(dir.path)")
 			return
 		}
-		let path = dir
+		// Use first model for now
+		guard let model = models.first else {
+			state = .error("No models found under model directory: \(dir.path)")
+			return
+		}
 		Task {
 			do {
-				try await load(url: path)
+				try await load(model: model)
 			} catch {
 				NSLog("Error loading model: \(error)")
 				DispatchQueue.main.async {
@@ -57,13 +65,22 @@ class AppState: ObservableObject {
 		}
 	}
 	
-	func load(url: URL) async throws {
+	func load(model: String) async throws {
+		NSLog("*** Loading model: \(model)")
+		let dir = modelDir.appending(component: model, directoryHint: .isDirectory)
+		let fm = FileManager.default
+		if !fm.fileExists(atPath: dir.path) {
+			let msg = "Model directory: \(model) does not exist at: \(dir.path). Cannot proceed."
+			NSLog(msg)
+			state = .error(msg)
+			return
+		}
 		let beginDate = Date()
 		let configuration = MLModelConfiguration()
 		// .all works for v1.4, but not for v1.5
 		configuration.computeUnits = .cpuAndGPU
 		// TODO: measure performance on different devices
-		let pipeline = try StableDiffusionPipeline(resourcesAt: url, configuration: configuration, disableSafety: true)
+		let pipeline = try StableDiffusionPipeline(resourcesAt: dir, configuration: configuration, disableSafety: true)
 		NSLog("Pipeline loaded in \(Date().timeIntervalSince(beginDate))")
 		DispatchQueue.main.async {
 			self.pipeline = Pipeline(pipeline)
