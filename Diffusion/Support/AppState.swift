@@ -24,6 +24,14 @@ class AppState: ObservableObject {
 		}
 	}
 
+	var currentModel: String = "" {
+		didSet {
+			Task {
+				await load(model: currentModel)
+			}
+		}
+	}
+	
 	private init() {
 		NSLog("*** AppState initialized")
 		// Does the model path exist?
@@ -53,19 +61,10 @@ class AppState: ObservableObject {
 			state = .error("No models found under model directory: \(dir.path)")
 			return
 		}
-		Task {
-			do {
-				try await load(model: model)
-			} catch {
-				NSLog("Error loading model: \(error)")
-				DispatchQueue.main.async {
-					self.state = .error(error.localizedDescription)
-				}
-			}
-		}
+		currentModel = model
 	}
 	
-	func load(model: String) async throws {
+	func load(model: String) async {
 		NSLog("*** Loading model: \(model)")
 		let dir = modelDir.appending(component: model, directoryHint: .isDirectory)
 		let fm = FileManager.default
@@ -80,11 +79,18 @@ class AppState: ObservableObject {
 		// .all works for v1.4, but not for v1.5
 		configuration.computeUnits = .cpuAndGPU
 		// TODO: measure performance on different devices
-		let pipeline = try StableDiffusionPipeline(resourcesAt: dir, configuration: configuration, disableSafety: true)
-		NSLog("Pipeline loaded in \(Date().timeIntervalSince(beginDate))")
-		DispatchQueue.main.async {
-			self.pipeline = Pipeline(pipeline)
-			self.state = .ready("Ready")
+		do {
+			let pipeline = try StableDiffusionPipeline(resourcesAt: dir, configuration: configuration, disableSafety: true)
+			NSLog("Pipeline loaded in \(Date().timeIntervalSince(beginDate))")
+			DispatchQueue.main.async {
+				self.pipeline = Pipeline(pipeline)
+				self.state = .ready("Ready")
+			}
+		} catch {
+			NSLog("Error loading model: \(error)")
+			DispatchQueue.main.async {
+				self.state = .error(error.localizedDescription)
+			}
 		}
 	}
 }

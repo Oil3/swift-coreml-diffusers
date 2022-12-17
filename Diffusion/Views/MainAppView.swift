@@ -71,39 +71,59 @@ struct MainAppView: View {
                 .buttonStyle(.borderedProminent)
 				.disabled(isBusy)
             }
+			
 			Spacer().frame(height: 16)
+			
 			HStack(alignment: .top) {
 				VStack(alignment: .leading) {
 					Group {
+						Picker("Model", selection: $context.currentModel) {
+							ForEach(context.models, id: \.self) { s in
+								Text(s).tag(s)
+							}
+						}
+						
+						Spacer().frame(height: 16)
+						
 						Picker("Scheduler", selection: $scheduler) {
 							ForEach(StableDiffusionScheduler.allCases, id: \.self) { s in
 								Text(s.rawValue).tag(s)
 							}
 						}
-						Text("")
+						
+						Spacer().frame(height: 16)
+						
 						Text("Guidance Scale: \(String(format: "%.1f", guidance))")
 						Slider(value: $guidance, in: 0...15, step: 0.1, label: {},
 							minimumValueLabel: {Text("0")},
 							maximumValueLabel: {Text("15")})
-						Text("")
+						
+						Spacer().frame(height: 16)
 					}
 					Group {
 						Text("Number of Inference Steps: \(String(format: "%.0f", steps))")
 						Slider(value: $steps, in: 1...300, step: 1, label: {},
 							minimumValueLabel: {Text("1")},
 							maximumValueLabel: {Text("300")})
-						Text("")
+						
+						Spacer().frame(height: 16)
+						
 						Text("Number of Images: \(String(format: "%.0f", numImages))")
 						Slider(value: $numImages, in: 1...8, step: 1, label: {},
 							minimumValueLabel: {Text("1")},
 							maximumValueLabel: {Text("8")})
-						Text("")
+						
+						Spacer().frame(height: 16)
 					}
-					Text("Safety Check On?")
-					Toggle("", isOn: $safetyOn)
-					Text("")
-					Text("Seed")
-					TextField("", value: $seed, format: .number)
+					Group {
+						Text("Safety Check On?")
+						Toggle("", isOn: $safetyOn)
+						
+						Spacer().frame(height: 16)
+						
+						Text("Seed")
+						TextField("", value: $seed, format: .number)
+					}
 //					Group {
 //						Text("Image Width")
 //						Slider(value: $width, in: 64...2048, step: 8, label: {},
