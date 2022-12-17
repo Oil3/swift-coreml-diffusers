@@ -1,6 +1,7 @@
 // For licensing see accompanying LICENSE.md file.
 // Copyright (C) 2022 Apple Inc. and The HuggingFace Team. All Rights Reserved.
 
+import Accelerate
 import CoreML
 
 /// A scheduler used to compute a de-noised image
@@ -15,6 +16,7 @@ import CoreML
 ///  - Assumes the model predicts epsilon.
 ///  - No dynamic thresholding.
 ///  - `midpoint` solver algorithm.
+@available(iOS 16.2, macOS 13.1, *)
 public final class DPMSolverMultistepScheduler: Scheduler {
     public let trainStepCount: Int
     public let inferenceStepCount: Int
@@ -37,7 +39,7 @@ public final class DPMSolverMultistepScheduler: Scheduler {
     // Stores solverOrder (2) items
     private(set) var modelOutputs: [MLShapedArray<Float32>] = []
 
-    /// Create a scheduler that uses a pseudo linear multi-step (PLMS)  method
+    /// Create a scheduler that uses a second order DPM-Solver++ algorithm.
     ///
     /// - Parameters:
     ///   - stepCount: Number of inference steps to schedule
@@ -71,8 +73,8 @@ public final class DPMSolverMultistepScheduler: Scheduler {
         self.alphasCumProd = alphasCumProd
 
         // Currently we only support VP-type noise shedule
-        self.alpha_t = self.alphasCumProd.map { sqrt($0) }
-        self.sigma_t = self.alphasCumProd.map { sqrt(1 - $0) }
+        self.alpha_t = vForce.sqrt(self.alphasCumProd)
+        self.sigma_t = vForce.sqrt(vDSP.subtract([Float](repeating: 1, count: self.alphasCumProd.count), self.alphasCumProd))
         self.lambda_t = zip(self.alpha_t, self.sigma_t).map { α, σ in log(α) - log(σ) }
 
         self.timeSteps = linspace(0, Float(self.trainStepCount-1), stepCount).reversed().map { Int(round($0)) }
@@ -171,7 +173,9 @@ public final class DPMSolverMultistepScheduler: Scheduler {
                 sample: sample
             )
         }
-        if lowerOrderStepped < solverOrder { lowerOrderStepped += 1 }
+        if lowerOrderStepped < solverOrder {
+            lowerOrderStepped += 1
+        }
         
         return prevSample
     }

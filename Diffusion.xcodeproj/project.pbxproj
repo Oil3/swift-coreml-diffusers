@@ -18,6 +18,8 @@
 		DD37983D294D4D0C00650BE3 /* Random.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD37983B294D4D0C00650BE3 /* Random.swift */; };
 		DD37983E294D4D0C00650BE3 /* DPMSolverMultistepScheduler.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD37983C294D4D0C00650BE3 /* DPMSolverMultistepScheduler.swift */; };
 		DD379840294D4D3F00650BE3 /* Decoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD37983F294D4D3F00650BE3 /* Decoder.swift */; };
+		DD379843294D4FAA00650BE3 /* ResourceManaging.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD379841294D4FAA00650BE3 /* ResourceManaging.swift */; };
+		DD379844294D4FAA00650BE3 /* ManagedMLModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD379842294D4FAA00650BE3 /* ManagedMLModel.swift */; };
 		DD6512D0294B0FF50035EC0F /* PreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD6512CF294B0FF50035EC0F /* PreviewView.swift */; };
 		EBB5BA5329425BEE003A2A5B /* PipelineLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBB5BA5229425BEE003A2A5B /* PipelineLoader.swift */; };
 		EBB5BA5829425E17003A2A5B /* Path in Frameworks */ = {isa = PBXBuildFile; productRef = EBB5BA5729425E17003A2A5B /* Path */; };
@@ -63,6 +65,8 @@
 		DD37983B294D4D0C00650BE3 /* Random.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Random.swift; sourceTree = "<group>"; };
 		DD37983C294D4D0C00650BE3 /* DPMSolverMultistepScheduler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DPMSolverMultistepScheduler.swift; sourceTree = "<group>"; };
 		DD37983F294D4D3F00650BE3 /* Decoder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Decoder.swift; sourceTree = "<group>"; };
+		DD379841294D4FAA00650BE3 /* ResourceManaging.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ResourceManaging.swift; sourceTree = "<group>"; };
+		DD379842294D4FAA00650BE3 /* ManagedMLModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ManagedMLModel.swift; sourceTree = "<group>"; };
 		DD651294294ADF9D0035EC0F /* Sign-Debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "Sign-Debug.xcconfig"; sourceTree = "<group>"; };
 		DD651295294ADFAB0035EC0F /* Debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Debug.xcconfig; sourceTree = "<group>"; };
 		DD651296294AE18F0035EC0F /* Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Release.xcconfig; sourceTree = "<group>"; };
@@ -128,13 +132,15 @@
 			children = (
 				DD37983F294D4D3F00650BE3 /* Decoder.swift */,
 				DD37983C294D4D0C00650BE3 /* DPMSolverMultistepScheduler.swift */,
+				DD379842294D4FAA00650BE3 /* ManagedMLModel.swift */,
 				DD37983B294D4D0C00650BE3 /* Random.swift */,
-				DD379835294D4C9E00650BE3 /* StableDiffusionPipeline+Resources.swift */,
-				DD379833294D4C8000650BE3 /* Scheduler.swift */,
+				DD379841294D4FAA00650BE3 /* ResourceManaging.swift */,
 				DD37982E294D4C4800650BE3 /* SafetyChecker.swift */,
+				DD379833294D4C8000650BE3 /* Scheduler.swift */,
+				DD37982A294D4BFD00650BE3 /* StableDiffusionPipeline.swift */,
+				DD379835294D4C9E00650BE3 /* StableDiffusionPipeline+Resources.swift */,
 				DD37982F294D4C4800650BE3 /* TextEncoder.swift */,
 				DD37982D294D4C4800650BE3 /* Unet.swift */,
-				DD37982A294D4BFD00650BE3 /* StableDiffusionPipeline.swift */,
 			);
 			path = pipeline;
 			sourceTree = "<group>";
@@ -395,6 +401,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DD379843294D4FAA00650BE3 /* ResourceManaging.swift in Sources */,
 				DD379839294D4CC500650BE3 /* BPETokenizer+Reading.swift in Sources */,
 				DD37983A294D4CC500650BE3 /* BPETokenizer.swift in Sources */,
 				DD37982C294D4BFD00650BE3 /* StableDiffusionPipeline.swift in Sources */,
@@ -412,6 +419,7 @@
 				DD37983E294D4D0C00650BE3 /* DPMSolverMultistepScheduler.swift in Sources */,
 				DD379834294D4C8000650BE3 /* Scheduler.swift in Sources */,
 				EBB5BA5329425BEE003A2A5B /* PipelineLoader.swift in Sources */,
+				DD379844294D4FAA00650BE3 /* ManagedMLModel.swift in Sources */,
 				EBE755C9293E37DD00806B32 /* DiffusionApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

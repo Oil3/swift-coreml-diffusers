@@ -3,7 +3,7 @@
 
 import CoreML
 
-
+@available(iOS 16.2, macOS 13.1, *)
 public protocol Scheduler {
     /// Number of diffusion steps performed during training
     var trainStepCount: Int { get }
@@ -42,10 +42,12 @@ public protocol Scheduler {
     ) -> MLShapedArray<Float32>
 }
 
+@available(iOS 16.2, macOS 13.1, *)
 public extension Scheduler {
     var initNoiseSigma: Float { 1 }
 }
 
+@available(iOS 16.2, macOS 13.1, *)
 public extension Scheduler {
     /// Compute weighted sum of shaped arrays of equal shapes
     ///
@@ -55,7 +57,7 @@ public extension Scheduler {
     /// - Returns: sum_i weights[i]*values[i]
     func weightedSum(_ weights: [Double], _ values: [MLShapedArray<Float32>]) -> MLShapedArray<Float32> {
         assert(weights.count > 1 && values.count == weights.count)
-        assert(values.allSatisfy({$0.scalarCount == values.first!.scalarCount}))
+        assert(values.allSatisfy({ $0.scalarCount == values.first!.scalarCount }))
         var w = Float(weights.first!)
         var scalars = values.first!.scalars.map({ $0 * w })
         for next in 1 ..< values.count {
@@ -70,6 +72,7 @@ public extension Scheduler {
 }
 
 /// How to map a beta range to a sequence of betas to step over
+@available(iOS 16.2, macOS 13.1, *)
 public enum BetaSchedule {
     /// Linear stepping between start and end
     case linear
@@ -84,6 +87,7 @@ public enum BetaSchedule {
 ///  [Hugging Face Diffusers PNDMScheduler](https://github.com/huggingface/diffusers/blob/main/src/diffusers/schedulers/scheduling_pndm.py)
 ///
 /// This scheduler uses the pseudo linear multi-step (PLMS) method only, skipping pseudo Runge-Kutta (PRK) steps
+@available(iOS 16.2, macOS 13.1, *)
 public final class PNDMScheduler: Scheduler {
     public let trainStepCount: Int
     public let inferenceStepCount: Int
@@ -115,21 +119,19 @@ public final class PNDMScheduler: Scheduler {
     ) {
         self.trainStepCount = trainStepCount
         self.inferenceStepCount = stepCount
-        
+
         switch betaSchedule {
         case .linear:
             self.betas = linspace(betaStart, betaEnd, trainStepCount)
         case .scaledLinear:
             self.betas = linspace(pow(betaStart, 0.5), pow(betaEnd, 0.5), trainStepCount).map({ $0 * $0 })
         }
-        
         self.alphas = betas.map({ 1.0 - $0 })
         var alphasCumProd = self.alphas
         for i in 1..<alphasCumProd.count {
             alphasCumProd[i] *= alphasCumProd[i -  1]
         }
         self.alphasCumProd = alphasCumProd
-        
         let stepsOffset = 1 // For stable diffusion
         let stepRatio = Float(trainStepCount / stepCount )
         let forwardSteps = (0..<stepCount).map {

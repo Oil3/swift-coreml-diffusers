@@ -26,7 +26,7 @@ struct TextToImageView: View {
 	@State private var height = 512.0
 	@State private var steps = 25.0
 	@State private var numImages = 1.0
-	@State private var seed: UInt32? = nil
+	@State private var seed: Int? = nil
 	@State private var safetyOn: Bool = true
 
     @State private var progressSubscriber: Cancellable?
