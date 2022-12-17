@@ -10,41 +10,27 @@ import UniformTypeIdentifiers
 
 struct PreviewView: View {
 	var image: Binding<CGImage?>
-	var state: Binding<GenerationState>
+	var prompt: Binding<String>
 		
 	var body: some View {
-		switch state.wrappedValue {
-		case .startup: return AnyView(Image("placeholder").resizable())
-		case .running(let progress):
-			guard let progress = progress, progress.stepCount > 0 else {
-				// The first time it takes a little bit before generation starts
-				return AnyView(ProgressView())
-			}
-			let step = Int(progress.step) + 1
-			let fraction = Double(step) / Double(progress.stepCount)
-			let label = "Step \(step) of \(progress.stepCount)"
-			return AnyView(ProgressView(label, value: fraction, total: 1).padding())
-			
-		case .idle(let lastPrompt):
-			guard let theImage = image.wrappedValue else {
-				return AnyView(Image(systemName: "exclamationmark.triangle").resizable())
-			}
-							  
+		if let theImage = image.wrappedValue {
 			let imageView = Image(theImage, scale: 1, label: Text("generated"))
 			return AnyView(
 				VStack {
 				imageView.resizable().clipShape(RoundedRectangle(cornerRadius: 20))
 					HStack {
-						ShareLink(item: imageView, preview: SharePreview(lastPrompt, image: imageView))
+						ShareLink(item: imageView, preview: SharePreview(prompt.wrappedValue, image: imageView))
 						Button("Save", action: {
 							saveImage(cgi: theImage)
 						})
 					}
 			})
 		}
+		return AnyView(Image("placeholder").resizable())
 	}
 	
 	private func saveImage(cgi: CGImage) {
+#if os(macOS)
 		let panel = NSSavePanel()
 		panel.allowedContentTypes = [.png, .jpeg]
 		panel.canCreateDirectories = true
@@ -69,12 +55,13 @@ struct PreviewView: View {
 		} else {
 			NSLog("*** Unknown image extension: \(ext)")
 		}
+#endif
 	}
 }
 
 
 struct PreviewView_Previews: PreviewProvider {
     static var previews: some View {
-		PreviewView(image: .constant(nil), state: .constant(.startup))
+		PreviewView(image: .constant(nil), prompt: .constant("Test prompt"))
     }
 }

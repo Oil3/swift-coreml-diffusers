@@ -11,11 +11,23 @@ For faster inference, we use a very fast scheduler: [DPM-Solver++](https://githu
 
 ## Installing
 
-The Xcode project uses xcconfig files to implement code signing so that anybody can use the project without having to set up code signing again (except for the first time). You just need to make a copy of the `Sign-Debug-template.xcconfig` and `Sign-Release-template.xcconfig` files and name them `Sign-Debug.xcconfig` and `Sign-Release.xcconfig` respectively.
+### The Project
+
+The Xcode project has been set up in such a way that you can clone the repo, set up your configuration once and then continue to use it (and pull updates and/or submit pull requests) without your local signing configuration needing to be fixed each time.
+
+The project uses xcconfig files to implement this. You just need to make a copy of the `Sign-Debug-template.xcconfig` and `Sign-Release-template.xcconfig` files and name them `Sign-Debug.xcconfig` and `Sign-Release.xcconfig` respectively.
 
 You then need to create two manual provisioning profiles (Xcode will not accept automatically created profiles for this purpose) and insert the relevant values from them into the newly created files. You also need to set your own bundle identier (for the `PRODUCT_BUNDLE_IDENTIFIER` key) to the file so that code signing will let you use your own bundle ID.
 
 (I will add more detailed documentation here as to how to do all of this when I have a bit of time but a little bit of Googling should show you how to create a manual provisioning profile and to get the values from the provisioing profile you created 🙂)
+
+### Model Data
+
+The app does not pull model data from anywhere — it simply expects the model data to be in separate folders (for each supported model) under your `Documents` folder under the sub-folder structure of `Diffusion\models`. You would need to create these folder and download the models you want from Hugging Face (https://huggingface.co/apple).
+
+The app has the loaded model hardcode to `coreml-stable-diffusion-v1-5_original_compiled`. You can change this to the correct model folder depending on how you want to name/organize things.
+
+The plan is to add the ability to switch between multiple modesl by selecting the model you want from the models folder. But this is not in place at the moment.
 
 ## Compatibility
 

@@ -9,17 +9,19 @@
 import SwiftUI
 import Combine
 
-enum GenerationState {
-    case startup
+enum MainViewState {
+    case loading
+	case idle
+	case ready(String)
+	case error(String)
     case running(StableDiffusionProgress?)
-    case idle(String)
 }
 
-struct TextToImageView: View {
-    @EnvironmentObject var context: DiffusionGlobals
+struct MainAppView: View {
+	@StateObject var context = AppState.shared
 	
 	@State private var image: CGImage? = nil
-	@State private var state: GenerationState = .startup
+	@State private var state: MainViewState = .loading
     @State private var prompt = "discworld the fifth elephant, Highly detailed, Artstation, Colorful"
 	@State private var negPrompt = "ugly, boring, bad anatomy"
 	@State private var scheduler = StableDiffusionScheduler.dpmpp
@@ -32,6 +34,7 @@ struct TextToImageView: View {
 	@State private var safetyOn: Bool = true
 	@State private var images = [CGImage]()
 
+	@State private var stateSubscriber: Cancellable?
     @State private var progressSubscriber: Cancellable?
 	
 
@@ -40,12 +43,19 @@ struct TextToImageView: View {
         Task {
             state = .running(nil)
             await generate(pipeline: context.pipeline, prompt: prompt)
-            state = .idle(prompt)
+            state = .ready("Image generation complete")
         }
     }
     
     var body: some View {
 		VStack(alignment: .leading) {
+			if case .loading = state {
+				ErrorPopover(errorMessage: "Loading ...")
+			} else if case let .error(msg) = state {
+				ErrorPopover(errorMessage: msg)
+			} else if case let .running(progress) = state {
+				getProgressView(progress: progress)
+			}
             HStack {
 				VStack {
 					TextField("Prompt", text: $prompt)
@@ -105,7 +115,7 @@ struct TextToImageView: View {
 				}
 				Spacer()
 				VStack {
-					PreviewView(image: $image, state: $state)
+					PreviewView(image: $image, prompt: $prompt)
 						.scaledToFit()
 					
 					Divider()
@@ -126,6 +136,13 @@ struct TextToImageView: View {
         }
         .padding()
         .onAppear {
+			// AppState state subscriber
+			stateSubscriber = context.statePublisher.sink { state in
+				DispatchQueue.main.async {
+					self.state = state
+				}
+			}
+			// Pipeline progress subscriber
             progressSubscriber = context.pipeline?.progressPublisher.sink { progress in
                 guard let progress = progress else { return }
                 state = .running(progress)
@@ -143,10 +160,21 @@ struct TextToImageView: View {
 			NSLog("Error generating images: \(error)")
 		}
 	}
+	
+	private func getProgressView(progress: StableDiffusionProgress?) -> AnyView {
+		guard let progress = progress, progress.stepCount > 0 else {
+			// The first time it takes a little bit before generation starts
+			return AnyView(ProgressView())
+		}
+		let step = Int(progress.step) + 1
+		let fraction = Double(step) / Double(progress.stepCount)
+		let label = "Step \(step) of \(progress.stepCount)"
+		return AnyView(ProgressView(label, value: fraction, total: 1).padding())
+	}
 }
 
-struct TextToImageView_Previews: PreviewProvider {
+struct MainAppView_Previews: PreviewProvider {
 	static var previews: some View {
-		TextToImageView().previewLayout(.sizeThatFits).environmentObject(DiffusionGlobals())
+		MainAppView().previewLayout(.sizeThatFits)
 	}
 }

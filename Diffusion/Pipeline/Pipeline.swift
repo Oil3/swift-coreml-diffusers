@@ -44,7 +44,7 @@ class Pipeline {
             handleProgress(progress)
             return true
         }
-        print("Got images: \(images) in \(Date().timeIntervalSince(beginDate))")
+        NSLog("Got images: \(images) in \(Date().timeIntervalSince(beginDate))")
         // Do we have the righ number of images?
 		let imgs = images.compactMap({$0})
 		if imgs.count != imageCount {

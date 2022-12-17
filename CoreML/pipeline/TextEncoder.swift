@@ -56,7 +56,7 @@ public struct TextEncoder: ResourceManaging {
             tokens = tokens.dropLast(tokens.count - inputLength)
             ids = ids.dropLast(ids.count - inputLength)
             let truncated = tokenizer.decode(tokens: tokens)
-            print("Needed to truncate input '\(text)' to '\(truncated)'")
+            NSLog("Needed to truncate input '\(text)' to '\(truncated)'")
         }
 
         // Use the model to generate the embedding
