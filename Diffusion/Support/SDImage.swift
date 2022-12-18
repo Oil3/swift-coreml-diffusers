@@ -25,6 +25,10 @@ struct SDImage {
 	var guidance = 7.5
 	var imageIndex = 0
 	
+	var seedStr: String {
+		return String(seed)
+	}
+	
 	// Save image with metadata
 	func save() {
 		guard let img = image else {
@@ -44,10 +48,10 @@ struct SDImage {
 			return
 		}
 		guard let url = panel.url else { return }
-		let meta = ["Author": meta(), "Title": title(), "Seed": "\(seed)"]
-		NSLog("Saving with meta: \(meta)")
 		guard let data = CFDataCreateMutable(nil, 0) else { return }
 		guard let destination = CGImageDestinationCreateWithData(data, UTType.jpeg.identifier as CFString, 1, nil) else { return }
+		let iptc = [kCGImagePropertyIPTCOriginatingProgram: meta(), kCGImagePropertyIPTCCaptionAbstract: title(), kCGImagePropertyIPTCProgramVersion: "\(seed)"]
+		let meta = [kCGImagePropertyIPTCDictionary: iptc]
 		CGImageDestinationAddImage(destination, img, meta as CFDictionary)
 		guard CGImageDestinationFinalize(destination) else { return }
 		// Save image that now has metadata

@@ -6,6 +6,12 @@
 //
 
 import SwiftUI
+import UniformTypeIdentifiers
+#if os(macOS)
+import AppKit
+#else
+import UIKit
+#endif
 
 struct PreviewView: View {
 	var image: Binding<SDImage?>
@@ -17,6 +23,18 @@ struct PreviewView: View {
 				VStack {
 				imageView.resizable().clipShape(RoundedRectangle(cornerRadius: 20))
 					HStack {
+						Text("Seed: \(sdi.seedStr)")
+							.help("The seed for this image. Tap to copy to clipboard.")
+							.onTapGesture {
+#if os(macOS)
+								let pb = NSPasteboard.general
+								pb.declareTypes([.string], owner: nil)
+								pb.setString(sdi.seedStr, forType: .string)
+#else
+								UIPasteboard.general.setValue(sdi.seedStr, forPasteboardType: UTType.plainText.identifier)
+#endif
+							}
+						Spacer()
 						ShareLink(item: imageView, preview: SharePreview(sdi.prompt, image: imageView))
 						Button("Save", action: {
 							sdi.save()
