@@ -48,6 +48,10 @@ The plan is to add the ability to switch between multiple modesl by selecting th
 - Provide a recommended "compute units" configuration based on model and platform.
 - Explore other features (image to image, for example)
 
+## Release Notes
+
+You can read the release notes for current and upcoming releases [here](RELEASE.md).
+
 ## Credit
 
 For faster inference, the project uses a very fast scheduler: [DPM-Solver++](https://github.com/LuChengTHU/dpm-solver) that was ported to Swift by the Hugging Face team/[Pedro Cuenca](https://github.com/pcuenca/). Since this scheduler is still not available in Apple's GitHub repository, the application depends on the following fork instead: https://github.com/pcuenca/ml-stable-diffusion. The Swift port is based on [Diffusers' DPMSolverMultistepScheduler](https://github.com/huggingface/diffusers/blob/main/src/diffusers/schedulers/scheduling_dpmsolver_multistep.py), with a number of simplifications.
