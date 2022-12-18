@@ -18,12 +18,12 @@ enum MainViewState {
 }
 
 struct MainAppView: View {
-	@StateObject var context = AppState.shared
+	@StateObject var cfg = AppState.shared
 	
 	@State private var image: SDImage? = nil
 	@State private var state: MainViewState = .loading
-    @State private var prompt = "discworld the fifth elephant, Highly detailed, Artstation, Colorful"
-	@State private var negPrompt = "ugly, boring, bad anatomy"
+    @State private var prompt = ""
+	@State private var negPrompt = ""
 	@State private var scheduler = StableDiffusionScheduler.dpmpp
 	@State private var guidance = 7.5
 	@State private var width = 512.0
@@ -83,14 +83,21 @@ struct MainAppView: View {
         }
         .padding()
         .onAppear {
+			// Set saved values
+			prompt = cfg.prompt
+			negPrompt = cfg.negPrompt
+			scheduler = cfg.scheduler
+			guidance = cfg.guidance
+			steps = cfg.steps
+			numImages = cfg.numImages
 			// AppState state subscriber
-			stateSubscriber = context.statePublisher.sink { state in
+			stateSubscriber = cfg.statePublisher.sink { state in
 				DispatchQueue.main.async {
 					self.state = state
 				}
 			}
 			// Pipeline progress subscriber
-            progressSubscriber = context.pipeline?.progressPublisher.sink { progress in
+            progressSubscriber = cfg.pipeline?.progressPublisher.sink { progress in
                 guard let progress = progress else { return }
                 state = .running(progress)
             }
@@ -140,8 +147,8 @@ struct MainAppView: View {
 	private func getSidebarView() -> AnyView {
 		let vw = VStack(alignment: .leading) {
 			Group {
-				Picker("Model", selection: $context.currentModel) {
-					ForEach(context.models, id: \.self) { s in
+				Picker("Model", selection: $cfg.currentModel) {
+					ForEach(cfg.models, id: \.self) { s in
 						Text(s).tag(s)
 					}
 				}
@@ -203,11 +210,18 @@ struct MainAppView: View {
 	
 	private func submit() {
 		if case .running = state { return }
-		guard let pipeline = context.pipeline else {
+		guard let pipeline = cfg.pipeline else {
 			state = .error("No pipeline available!")
 			return
 		}
 		state = .running(nil)
+		// Save current config
+		cfg.prompt = prompt
+		cfg.negPrompt = negPrompt
+		cfg.scheduler = scheduler
+		cfg.guidance = guidance
+		cfg.steps = steps
+		cfg.numImages = numImages
 		// Pipeline progress subscriber
 		progressSubs = pipeline.progressPublisher.sink { progress in
 			guard let progress = progress else { return }
@@ -227,7 +241,7 @@ struct MainAppView: View {
 					s.image = img
 					s.prompt = prompt
 					s.negPrompt = prompt
-					s.model = context.currentModel
+					s.model = cfg.currentModel
 					s.scheduler = scheduler.rawValue
 					s.seed = seed
 					s.numSteps = Int(steps)
