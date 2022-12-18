@@ -20,7 +20,7 @@ enum MainViewState {
 struct MainAppView: View {
 	@StateObject var context = AppState.shared
 	
-	@State private var image: CGImage? = nil
+	@State private var image: SDImage? = nil
 	@State private var state: MainViewState = .loading
     @State private var prompt = "discworld the fifth elephant, Highly detailed, Artstation, Colorful"
 	@State private var negPrompt = "ugly, boring, bad anatomy"
@@ -30,9 +30,9 @@ struct MainAppView: View {
 	@State private var height = 512.0
 	@State private var steps = 25.0
 	@State private var numImages = 1.0
-	@State private var seed: Int? = nil
+	@State private var seed = -1
 	@State private var safetyOn: Bool = true
-	@State private var images = [CGImage]()
+	@State private var images = [SDImage]()
 
 	@State private var stateSubscriber: Cancellable?
     @State private var progressSubscriber: Cancellable?
@@ -50,102 +50,24 @@ struct MainAppView: View {
 	
     var body: some View {
 		VStack(alignment: .leading) {
-			if case .loading = state {
-				ErrorBanner(errorMessage: "Loading ...")
-			} else if case let .error(msg) = state {
-				ErrorBanner(errorMessage: msg)
-			} else if case let .running(progress) = state {
-				getProgressView(progress: progress)
-			}
-            HStack {
-				VStack {
-					TextField("Prompt", text: $prompt)
-						.textFieldStyle(.roundedBorder)
-					TextField("Negative Prompt", text: $negPrompt)
-						.textFieldStyle(.roundedBorder)
-				}
-                Button("Generate") {
-                    submit()
-                }
-                .padding()
-                .buttonStyle(.borderedProminent)
-				.disabled(isBusy)
-            }
-			
+			getBannerView()
+			getTopView()
 			Spacer().frame(height: 16)
 			
 			HStack(alignment: .top) {
-				VStack(alignment: .leading) {
-					Group {
-						Picker("Model", selection: $context.currentModel) {
-							ForEach(context.models, id: \.self) { s in
-								Text(s).tag(s)
-							}
-						}
-						
-						Spacer().frame(height: 16)
-						
-						Picker("Scheduler", selection: $scheduler) {
-							ForEach(StableDiffusionScheduler.allCases, id: \.self) { s in
-								Text(s.rawValue).tag(s)
-							}
-						}
-						
-						Spacer().frame(height: 16)
-						
-						Text("Guidance Scale: \(String(format: "%.1f", guidance))")
-						Slider(value: $guidance, in: 0...15, step: 0.1, label: {},
-							minimumValueLabel: {Text("0")},
-							maximumValueLabel: {Text("15")})
-						
-						Spacer().frame(height: 16)
-					}
-					Group {
-						Text("Number of Inference Steps: \(String(format: "%.0f", steps))")
-						Slider(value: $steps, in: 1...300, step: 1, label: {},
-							minimumValueLabel: {Text("1")},
-							maximumValueLabel: {Text("300")})
-						
-						Spacer().frame(height: 16)
-						
-						Text("Number of Images: \(String(format: "%.0f", numImages))")
-						Slider(value: $numImages, in: 1...8, step: 1, label: {},
-							minimumValueLabel: {Text("1")},
-							maximumValueLabel: {Text("8")})
-						
-						Spacer().frame(height: 16)
-					}
-					Group {
-						Text("Safety Check On?")
-						Toggle("", isOn: $safetyOn)
-						
-						Spacer().frame(height: 16)
-						
-						Text("Seed")
-						TextField("", value: $seed, format: .number)
-					}
-//					Group {
-//						Text("Image Width")
-//						Slider(value: $width, in: 64...2048, step: 8, label: {},
-//							   minimumValueLabel: {Text("64")},
-//							   maximumValueLabel: {Text("2048")})
-//						Text("Image Height")
-//						Slider(value: $height, in: 64...2048, step: 8, label: {},
-//							   minimumValueLabel: {Text("64")},
-//							   maximumValueLabel: {Text("2048")})
-//					}
-				}
+				getSidebarView()
 				Spacer()
 				VStack {
-					PreviewView(image: $image, prompt: $prompt)
+					PreviewView(image: $image)
 						.scaledToFit()
 					
 					Divider()
+					
 					if images.count > 0 {
 						ScrollView {
 							HStack {
 								ForEach(Array(images.enumerated()), id: \.offset) { i, img in
-									Image(img, scale: 5, label: Text(""))
+									Image(img.image!, scale: 5, label: Text(""))
 										.onTapGesture {
 											selectImage(index: i)
 										}
@@ -186,6 +108,99 @@ struct MainAppView: View {
 		return AnyView(ProgressView(label: {Text("Loading ...")}).progressViewStyle(.linear).padding())
 	}
 	
+	private func getBannerView() -> AnyView? {
+		if case .loading = state {
+			return AnyView(ErrorBanner(errorMessage: "Loading ..."))
+		} else if case let .error(msg) = state {
+			return AnyView(ErrorBanner(errorMessage: msg))
+		} else if case let .running(progress) = state {
+			return getProgressView(progress: progress)
+		}
+		return nil
+	}
+	
+	private func getTopView() -> AnyView {
+		let vw = HStack {
+			VStack {
+				TextField("Prompt", text: $prompt)
+					.textFieldStyle(.roundedBorder)
+				TextField("Negative Prompt", text: $negPrompt)
+					.textFieldStyle(.roundedBorder)
+			}
+			Button("Generate") {
+				submit()
+			}
+			.padding()
+			.buttonStyle(.borderedProminent)
+			.disabled(isBusy)
+		}
+		return AnyView(vw)
+	}
+
+	private func getSidebarView() -> AnyView {
+		let vw = VStack(alignment: .leading) {
+			Group {
+				Picker("Model", selection: $context.currentModel) {
+					ForEach(context.models, id: \.self) { s in
+						Text(s).tag(s)
+					}
+				}
+				
+				Spacer().frame(height: 16)
+				
+				Picker("Scheduler", selection: $scheduler) {
+					ForEach(StableDiffusionScheduler.allCases, id: \.self) { s in
+						Text(s.rawValue).tag(s)
+					}
+				}
+				
+				Spacer().frame(height: 16)
+				
+				Text("Guidance Scale: \(String(format: "%.1f", guidance))")
+				Slider(value: $guidance, in: 0...15, step: 0.1, label: {},
+					minimumValueLabel: {Text("0")},
+					maximumValueLabel: {Text("15")})
+				
+				Spacer().frame(height: 16)
+			}
+			Group {
+				Text("Number of Inference Steps: \(String(format: "%.0f", steps))")
+				Slider(value: $steps, in: 1...300, step: 1, label: {},
+					minimumValueLabel: {Text("1")},
+					maximumValueLabel: {Text("300")})
+				
+				Spacer().frame(height: 16)
+				
+				Text("Number of Images: \(String(format: "%.0f", numImages))")
+				Slider(value: $numImages, in: 1...8, step: 1, label: {},
+					minimumValueLabel: {Text("1")},
+					maximumValueLabel: {Text("8")})
+				
+				Spacer().frame(height: 16)
+			}
+			Group {
+				Text("Safety Check On?")
+				Toggle("", isOn: $safetyOn)
+				
+				Spacer().frame(height: 16)
+				
+				Text("Seed")
+				TextField("", value: $seed, format: .number)
+			}
+//					Group {
+//						Text("Image Width")
+//						Slider(value: $width, in: 64...2048, step: 8, label: {},
+//							   minimumValueLabel: {Text("64")},
+//							   maximumValueLabel: {Text("2048")})
+//						Text("Image Height")
+//						Slider(value: $height, in: 64...2048, step: 8, label: {},
+//							   minimumValueLabel: {Text("64")},
+//							   maximumValueLabel: {Text("2048")})
+//					}
+		}
+		return AnyView(vw)
+	}
+	
 	private func submit() {
 		if case .running = state { return }
 		guard let pipeline = context.pipeline else {
@@ -203,11 +218,26 @@ struct MainAppView: View {
 		DispatchQueue.global(qos: .background).async {
 			do {
 				// Generate
-				let imgs = try pipeline.generate(prompt: prompt, negPrompt: negPrompt, scheduler: scheduler, numInferenceSteps: Int(steps), imageCount: Int(numImages), safetyOn: safetyOn, seed: seed)
+				let (imgs, seed) = try pipeline.generate(prompt: prompt, negPrompt: negPrompt, scheduler: scheduler, numInferenceSteps: Int(steps), imageCount: Int(numImages), safetyOn: safetyOn, seed: seed)
 				progressSubs?.cancel()
+				// Create array of SDImage instances from images
+				var simgs = [SDImage]()
+				for (ndx, img) in imgs.enumerated() {
+					var s = SDImage()
+					s.image = img
+					s.prompt = prompt
+					s.negPrompt = prompt
+					s.model = context.currentModel
+					s.scheduler = scheduler.rawValue
+					s.seed = seed
+					s.numSteps = Int(steps)
+					s.guidance = guidance
+					s.imageIndex = ndx
+					simgs.append(s)
+				}
 				DispatchQueue.main.async {
-					image = imgs.first
-					images.append(contentsOf: imgs)
+					image = simgs.first
+					images.append(contentsOf: simgs)
 					state = .ready("Image generation complete")
 				}
 			} catch {

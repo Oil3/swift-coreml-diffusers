@@ -30,7 +30,7 @@ The plan is to add the ability to switch between multiple modesl by selecting th
 - macOS Ventura 13.1, iOS/iPadOS 16.2, Xcode 14.2.
 - Performance (after initial generation, which is slower)
   * ~10s in macOS on MacBook Pro M1 Max (64 GB).
-  * ~2 minutes in iPhone 13 Pro.
+  * ~2 minutes on iPhone 13 Pro.
 
 ## Limitations
 
@@ -43,8 +43,8 @@ The plan is to add the ability to switch between multiple modesl by selecting th
 
 - ~~Improve UI. Allow the user to select generation parameters.~~
 - ~~Implement negative prompts.~~
-- Implement other interesting schedulers.
 - ~~Allow other models to run.~~ 
+- Implement other interesting schedulers.
 - Provide a recommended "compute units" configuration based on model and platform.
 - Explore other features (image to image, for example)
 
