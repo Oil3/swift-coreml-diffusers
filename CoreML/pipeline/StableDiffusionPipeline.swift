@@ -249,33 +249,26 @@ public struct StableDiffusionPipeline: ResourceManaging {
         return MLShapedArray<Float32>(scalars: resultScalars, shape: shape)
     }
 
-    func decodeToImages(_ latents: [MLShapedArray<Float32>],
-                        disableSafety: Bool) throws -> [CGImage?] {
-
+    func decodeToImages(_ latents: [MLShapedArray<Float32>], disableSafety: Bool) throws -> [CGImage?] {
         let images = try decoder.decode(latents)
         if reduceMemory {
             decoder.unloadResources()
         }
-
         // If safety is disabled return what was decoded
         if disableSafety {
             return images
         }
-
         // If there is no safety checker return what was decoded
         guard let safetyChecker = safetyChecker else {
             return images
         }
-
         // Otherwise change images which are not safe to nil
         let safeImages = try images.map { image in
             try safetyChecker.isSafe(image) ? image : nil
         }
-
         if reduceMemory {
             safetyChecker.unloadResources()
         }
-
         return safeImages
     }
 

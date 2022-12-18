@@ -203,7 +203,7 @@ struct MainAppView: View {
 		DispatchQueue.global(qos: .background).async {
 			do {
 				// Generate
-				let imgs = try pipeline.generate(prompt: prompt, negPrompt: negPrompt, scheduler: scheduler, numInferenceSteps: Int(steps), safetyOn: safetyOn, seed: seed)
+				let imgs = try pipeline.generate(prompt: prompt, negPrompt: negPrompt, scheduler: scheduler, numInferenceSteps: Int(steps), imageCount: Int(numImages), safetyOn: safetyOn, seed: seed)
 				progressSubs?.cancel()
 				DispatchQueue.main.async {
 					image = imgs.first
