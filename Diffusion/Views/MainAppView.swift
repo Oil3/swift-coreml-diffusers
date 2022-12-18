@@ -54,32 +54,11 @@ struct MainAppView: View {
 			getTopView()
 			Spacer().frame(height: 16)
 			
-			HStack(alignment: .top) {
-				getSidebarView()
-				Spacer()
-				VStack {
-					PreviewView(image: $image)
-						.scaledToFit()
-					
-					Divider()
-					
-					if images.count > 0 {
-						ScrollView {
-							HStack {
-								ForEach(Array(images.enumerated()), id: \.offset) { i, img in
-									Image(img.image!, scale: 5, label: Text(""))
-										.onTapGesture {
-											selectImage(index: i)
-										}
-									Divider()
-								}
-							}
-						}
-						.frame(height: 103)
-					}
-				}
+			HSplitView {
+				getSidebarView().frame(minWidth: 200, maxWidth: 400)
+				
+				getPreviewPane()
 			}
-            Spacer()
         }
         .padding()
         .onAppear {
@@ -204,7 +183,35 @@ struct MainAppView: View {
 //							   minimumValueLabel: {Text("64")},
 //							   maximumValueLabel: {Text("2048")})
 //					}
+			Spacer()
 		}
+		.padding()
+		return AnyView(vw)
+	}
+	
+	private func getPreviewPane() -> AnyView {
+		let vw = VStack {
+			PreviewView(image: $image)
+				.scaledToFit()
+			
+			Divider()
+			
+			if images.count > 0 {
+				ScrollView {
+					HStack {
+						ForEach(Array(images.enumerated()), id: \.offset) { i, img in
+							Image(img.image!, scale: 5, label: Text(""))
+								.onTapGesture {
+									selectImage(index: i)
+								}
+							Divider()
+						}
+					}
+				}
+				.frame(height: 103)
+			}
+		}
+		.padding()
 		return AnyView(vw)
 	}
 	
