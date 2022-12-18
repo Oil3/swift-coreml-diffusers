@@ -33,9 +33,6 @@ public struct StableDiffusionPipeline: ResourceManaging {
     /// Optional model for checking safety of generated image
     var safetyChecker: SafetyChecker? = nil
 
-    /// Controls the influence of the text prompt on sampling process (0=random images)
-    var guidanceScale: Float = 7.5
-
     /// Reports whether this pipeline can perform safety checks
     public var canSafetyCheck: Bool {
         safetyChecker != nil
@@ -56,7 +53,7 @@ public struct StableDiffusionPipeline: ResourceManaging {
     ///   - unet: Model for noise prediction on latent samples
     ///   - decoder: Model for decoding latent sample to image
     ///   - safetyChecker: Optional model for checking safety of generated images
-    ///   - guidanceScale: Influence of the text prompt on generation process
+    ///   - guidanceScale: Influence of the text prompt on generation process (0=random images)
     ///   - reduceMemory: Option to enable reduced memory mode
     /// - Returns: Pipeline ready for image generation
     public init(textEncoder: TextEncoder,
@@ -108,7 +105,7 @@ public struct StableDiffusionPipeline: ResourceManaging {
     ///   - prompt: Text prompt to guide sampling
     ///   - stepCount: Number of inference steps to perform
     ///   - imageCount: Number of samples/images to generate for the input prompt
-    ///   - seed: Random seed which
+    ///   - seed: Random seed which allows us to re-generate the same image for the same prompt by re-using the seed
     ///   - guidanceScale: For classifier guidance
     ///   - disableSafety: Safety checks are only performed if `self.canSafetyCheck && !disableSafety`
     ///   - progressHandler: Callback to perform after each step, stops on receiving false response
@@ -125,7 +122,7 @@ public struct StableDiffusionPipeline: ResourceManaging {
         scheduler: StableDiffusionScheduler = .pndm,
         progressHandler: (Progress) -> Bool = { _ in true }
     ) throws -> [CGImage?] {
-
+		
         // Encode the input prompt as well as a blank unconditioned input
         let promptEmbedding = try textEncoder.encode(prompt)
         let negativePromptEmbedding = try textEncoder.encode(negativePrompt)
@@ -172,7 +169,7 @@ public struct StableDiffusionPipeline: ResourceManaging {
                 hiddenStates: hiddenStates
             )
 
-            noise = performGuidance(noise)
+			noise = performGuidance(noise: noise, guidance: guidanceScale)
 
             // Have the scheduler compute the previous (t-1) latent
             // sample given the predicted noise and current sample
@@ -235,22 +232,18 @@ public struct StableDiffusionPipeline: ResourceManaging {
         return states
     }
 
-    func performGuidance(_ noise: [MLShapedArray<Float32>]) -> [MLShapedArray<Float32>] {
-        noise.map { performGuidance($0) }
+	func performGuidance(noise: [MLShapedArray<Float32>], guidance: Float) -> [MLShapedArray<Float32>] {
+		noise.map { performGuidance(noise: $0, guidance: guidance) }
     }
 
-    func performGuidance(_ noise: MLShapedArray<Float32>) -> MLShapedArray<Float32> {
-
+	func performGuidance(noise: MLShapedArray<Float32>, guidance: Float) -> MLShapedArray<Float32> {
         let blankNoiseScalars = noise[0].scalars
         let textNoiseScalars = noise[1].scalars
-
         var resultScalars =  blankNoiseScalars
-
         for i in 0..<resultScalars.count {
             // unconditioned + guidance*(text - unconditioned)
-            resultScalars[i] += guidanceScale*(textNoiseScalars[i]-blankNoiseScalars[i])
+            resultScalars[i] += guidance * (textNoiseScalars[i]-blankNoiseScalars[i])
         }
-
         var shape = noise.shape
         shape[0] = 1
         return MLShapedArray<Float32>(scalars: resultScalars, shape: shape)
