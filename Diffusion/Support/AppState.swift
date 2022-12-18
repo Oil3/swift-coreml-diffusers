@@ -26,7 +26,9 @@ class AppState: ObservableObject {
 
 	var currentModel: String = "" {
 		didSet {
+			NSLog("*** Model set")
 			Task {
+				NSLog("*** Loading model")
 				await load(model: currentModel)
 			}
 		}
@@ -61,7 +63,12 @@ class AppState: ObservableObject {
 			state = .error("No models found under model directory: \(dir.path)")
 			return
 		}
-		currentModel = model
+		NSLog("*** Setting model")
+		self.currentModel = model
+		// On start, didSet does not appear to fire
+		Task {
+			await load(model: currentModel)
+		}
 	}
 	
 	func load(model: String) async {

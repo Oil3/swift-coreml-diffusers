@@ -144,8 +144,11 @@ struct MainAppView: View {
 					if images.count > 0 {
 						ScrollView {
 							HStack {
-								ForEach(images, id: \.self) { i in
-									Image(i, scale: 5, label: Text(""))
+								ForEach(Array(images.enumerated()), id: \.offset) { i, img in
+									Image(img, scale: 5, label: Text(""))
+										.onTapGesture {
+											selectImage(index: i)
+										}
 									Divider()
 								}
 							}
@@ -215,6 +218,10 @@ struct MainAppView: View {
 				}
 			}
 		}
+	}
+	
+	private func selectImage(index: Int) {
+		image = images[index]
 	}
 }
 
