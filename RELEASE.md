@@ -1,8 +1,10 @@
 # Release Notes
 
-### 1.1 — WIP
+### 1.1 — 19 Dec 2022
 
 * Custom file naming on save
+* Changed initial placeholder image
+* Minor code changes
 
 ### 1.0 — 18 Dec 2022
 
