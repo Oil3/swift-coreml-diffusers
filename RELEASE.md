@@ -1,5 +1,10 @@
 # Release Notes
 
+### 1.2 — WIP
+
+* Prompt history — pick from the last 20 prompts and negative prompts
+* 
+
 ### 1.1 — 19 Dec 2022
 
 * Custom file naming on save
