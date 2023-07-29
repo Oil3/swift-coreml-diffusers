@@ -10,30 +10,20 @@ import SwiftUI
 
 @main
 struct DiffusionApp: App {
-#if os(macOS)
-	@NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
-#else
-	@UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
-#endif
-
     var body: some Scene {
         WindowGroup {
-            MainAppView()
+            LoadingView()
         }
     }
 }
 
-#if os(macOS)
-class AppDelegate: NSObject, NSApplicationDelegate {
-	func applicationDidFinishLaunching(_ notification: Notification) {
-		NSLog("*** Application launched")
-	}
-}
-#else
-class AppDelegate: NSObject, UIApplicationDelegate {
-	func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
-		NSLog("Your code here")
-		return true
-	}
-}
-#endif
+let runningOnMac = ProcessInfo.processInfo.isMacCatalystApp
+let deviceHas6GBOrMore = ProcessInfo.processInfo.physicalMemory > 5924000000   // Different devices report different amounts, so approximate
+
+let deviceSupportsQuantization = {
+    if #available(iOS 17, *) {
+        true
+    } else {
+        false
+    }
+}()
